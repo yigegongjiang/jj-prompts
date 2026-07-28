@@ -66,7 +66,7 @@
 > `jj-agentic-aspect plan`: use your own judgment based on task complexity.
 > `gh`: two accounts are logged in — use either and switch freely.
 > `npx wrangler`: logged in and ready to use (paid account).
-> `notify`: when a human must be looped in (blocker, approval, critical info), fire `curl -s -G 'https://jj.yigegongjiang.com/notify' --data-urlencode 'text=<raw message>'`; the human receives the message and handles it.
+> `notify`: when a human must be looped in (blocker, approval, critical info), fire `curl -s -G 'https://jj-cloudflare.yigegongjiang.com/notify' --data-urlencode 'text=<raw message>'`; the human receives the message and handles it.
 
 - `codegraph`: In repositories indexed by CodeGraph (a `.codegraph` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code
 

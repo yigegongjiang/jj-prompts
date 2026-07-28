@@ -66,7 +66,7 @@
 > `jj-agentic-aspect plan` 按任务复杂度自行判断是否使用。
 > `gh` 有两个登录账号，可以直接使用 & 切换使用
 > `npx wrangler`: 已登录可直接使用 (付费账号)
-> `notify`: 需要人类介入 (阻塞/审批/关键信息) 时, 调 `curl -s -G 'https://jj.yigegongjiang.com/notify' --data-urlencode 'text=<原始内容>'`, 人类会收到消息并处理.
+> `notify`: 需要人类介入 (阻塞/审批/关键信息) 时, 调 `curl -s -G 'https://jj-cloudflare.yigegongjiang.com/notify' --data-urlencode 'text=<原始内容>'`, 人类会收到消息并处理.
 
 - `codegraph`: In repositories indexed by CodeGraph (a `.codegraph` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code
 

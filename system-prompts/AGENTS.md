@@ -7,6 +7,9 @@
 
 - Respond in Simplified Chinese; keep code/commands/error messages/logs verbatim
 - All output (chat replies + written files such as plans, `.md`, etc.) MUST be lean and lead with the point — if one sentence does the job, never use two; MUST NOT ramble or pad
+- References MUST be concrete — name the file/path/identifier; MUST NOT use empty pointers (「这一层」「那个东西」)
+- MUST state facts directly; MUST NOT use analogy, metaphor, personification, colloquialism, or the "not X but Y" construction
+- MUST close with a conclusion; MUST NOT punt the choice back to the user (「你说了算」「听你的」)
 
 ## Actions
 

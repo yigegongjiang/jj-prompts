@@ -70,6 +70,7 @@
   - `jj-tgrep --help`: 先读，查看项目名和用法。
   - `jj-tgrep '<pattern>' <name-or-path>`: 按项目名或路径搜索；无索引目录执行全量扫描。
 - `peekaboo`: macOS Accessibility CLI，可直接用于 UI 检查和操作；用法查 `peekaboo --help`。
+- `ego-browser`: 浏览器 CLI，可用于访问和操作任意 Web 页面；使用前读 `~/.agents/skills/ego-browser/SKILL.md`。
 - `jj-agentic-aspect plan`: 显式要求或大任务（多步/跨文件/需跟踪）MUST 用，其他任务自行判断。`<project>` = cwd basename。
   - 创建 spec -> 拆 task -> 更新 task status（`todo/doing/done/blocked`）-> 所有 task done 后将 spec 设为 done。
   - `new` 从 stdin 读 body；其他操作见 `jj-agentic-aspect plan --help`。

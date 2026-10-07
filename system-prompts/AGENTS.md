@@ -70,6 +70,7 @@
   - `jj-tgrep --help`: read first for project names and usage.
   - `jj-tgrep '<pattern>' <name-or-path>`: search by project name or path; unindexed directories use a full scan.
 - `peekaboo`: macOS Accessibility CLI, available for UI inspection and interaction; usage: `peekaboo --help`.
+- `ego-browser`: browser CLI for visiting and interacting with any web page; read `~/.agents/skills/ego-browser/SKILL.md` before use.
 - `jj-agentic-aspect plan`: MUST use when explicitly requested or for large tasks (multi-step/cross-file/needs tracking); otherwise optional. `<project>` = cwd basename.
   - Create spec -> create tasks -> update task status (`todo/doing/done/blocked`) -> mark spec done after all tasks are done.
   - `new` reads body from stdin; see `jj-agentic-aspect plan --help` for other operations.

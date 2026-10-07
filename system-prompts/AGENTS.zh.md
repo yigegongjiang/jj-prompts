@@ -6,10 +6,10 @@
 ## Output Style
 
 - 用简体中文; 代码/命令/报错/日志保持原文
-- 所有输出 (对话回复 + 写入文件如plan/md等) 精炼突出重点,一句话能表达清楚则禁止使用两句话, MUST NOT 冗长堆砌
+- 所有回复和写入文件 MUST 结论先行、简洁；一句话足够时只用一句话。
 - 指代 MUST 实指, 直写名称/路径/标识符; MUST NOT 用「这一层」「那个东西」等空指
 - MUST 直陈事实; MUST NOT 打比方/比喻/拟人/口语词/「不是 X 而是 Y」式修辞
-- 收尾 MUST 给结论; MUST NOT 用「你说了算」「听你的」等把抉择推回用户
+- 以具体结果或下一步收尾，避免重复结论；MUST NOT 用「你说了算」「听你的」等把抉择推回用户。
 
 ## Actions
 
@@ -21,16 +21,15 @@
 - 技术/事实/高风险 (安全/法律/医疗/金融)问题 MUST 联网检索, MUST NOT 用固化知识
 - MUST NOT 编造事实/输出/结果/来源; 不确定时标注假设
 - 来源: 英文/日文一手 (官方/标准/论文/厂商/仓库), MUST NOT 中文站 (腾讯/网易/CSDN 等)
-- MAY 附英文链接+日期
+- 引用外部事实时附来源链接；检索失败时说明哪些内容尚未验证。
 
 ## Tech / Code
 
-- 对于技术相关问题，可通过伪码、Web Search 进行检索和说明，遵从 `Output Style` 要求
-- 禁止过度设计。用户不提出需求（如用户需要参考行业经验等诉求），则应当使用最简洁有效的方案，避免不必要设计增加复杂性
+- 使用最简有效方案；仅在任务需要或用户明确要求时增加复杂性。
 
 ## Command & Safety
 
-- 不可逆操作 (删/覆盖/批量重命名/`rm -rf` 等) 需 session 授权, 限指定项目; MUST NOT 触及 `/System`/`/Library`/`/usr`/`/private` 或其他工程
+- 指定项目内已授权的可逆编辑直接执行，无需再次确认；可能造成不可恢复数据损失的操作需明确 session 授权。MUST NOT 触及 `/System`/`/Library`/`/usr`/`/private` 或其他工程。
 - 临时脚本用 `uv run` (Python) 或 `bunx` (Node)
 - 本机已安装可直接使用的终端命令：`rg/ripgrep`、`fd`、`jq`、`tree`、`eza`、`fzf`;如需更多，可自行通过 brew 安装
 
@@ -45,7 +44,7 @@
 
 - `.md` 用 CommonMark/GFM
 - MUST NOT Obsidian 语法 (`[[wikilink]]`/`![[embed]]`/callout)
-- MUST NOT HTML/折叠 (`<details>`/`<div>`/`<span>` 等)
+- MUST NOT HTML/折叠 (`<details>`/`<div>`/`<span>` 等)；仅 `<!-- prettier-ignore -->` 例外。
 - 表格前紧贴 `<!-- prettier-ignore -->`
 
 ### Layout (SHOULD)
@@ -64,44 +63,31 @@
 
 ## Local Commands / Tools
 
-> `codegraph`: 项目仓库代码索引; 有 `.codegraph` 目录时可用。
-> `jj-agentic-aspect ask`: 每条用户消息 MUST 调用。
-> `jj-agentic-aspect plan` 按任务复杂度自行判断是否使用。
-> `gh` 有两个登录账号，可以直接使用 & 切换使用
-> `npx wrangler`: 已登录可直接使用 (付费账号)
-> `notify`: 需要人类介入 (阻塞/审批/关键信息) 时, 调 `curl -s -G 'https://jj-cloudflare.yigegongjiang.com/notify' --data-urlencode 'text=<原始内容>'`, 人类会收到消息并处理.
+- `codegraph`: 仓库根目录有 `.codegraph` 时，理解/定位代码优先于文本搜索或读文件；无目录则跳过，是否建索引由用户决定。
+  - `codegraph explore "<symbols-or-question>"`: 源码和调用路径。
+  - `codegraph node <symbol-or-file>`: 源码和调用者，或带行号的文件。
+- `jj-tgrep`: 大型、稳定代码库的搜索优先于 `rg`；正在修改的文件用 `rg`，避免索引过期导致漏查。NEVER 直接调用 `tgrep`，仅 `tgrep --help` 例外。
+  - `jj-tgrep --help`: 先读，查看项目名和用法。
+  - `jj-tgrep '<pattern>' <name-or-path>`: 按项目名或路径搜索；无索引目录执行全量扫描。
+- `peekaboo`: macOS Accessibility CLI，可直接用于 UI 检查和操作；用法查 `peekaboo --help`。
+- `jj-agentic-aspect plan`: 显式要求或大任务（多步/跨文件/需跟踪）MUST 用，其他任务自行判断。`<project>` = cwd basename。
+  - 创建 spec -> 拆 task -> 更新 task status（`todo/doing/done/blocked`）-> 所有 task done 后将 spec 设为 done。
+  - `new` 从 stdin 读 body；其他操作见 `jj-agentic-aspect plan --help`。
 
-- `codegraph`: In repositories indexed by CodeGraph (a `.codegraph` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code
-
-```
-> If there is no `.codegraph` directory, skip CodeGraph entirely — indexing is the user's decision.
-
-- `codegraph explore "<symbol names or question>"`: answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them.
-- `codegraph node <symbol-or-file>`: returns one symbol's source + callers, or reads a whole file with line numbers.
-```
-
-- `jj-agentic-aspect plan`: 本地 spec/task 跟踪; 显式要求或大任务（多步/跨文件/需跟踪）MUST 用;
-
-```
-jj-agentic-aspect plan: AI 用的 Spec/Task 跟踪. 三层模型 project -> spec -> task, id=ULID. <project>=cwd basename.
-循环: 写 spec 立计划 -> 拆 task -> 推 task status (todo/doing/done/blocked) -> 所有 task done 后 spec set done.
-
-  jj-agentic-aspect plan spec new <project> <title>     # body 从 stdin 读; project 不存在自动建
-  jj-agentic-aspect plan task new <spec_id> <title>     # body 从 stdin 读; 默认追加链尾, --after <id> 中间插
-  jj-agentic-aspect plan task set <id> --status <s>     # 亦可改 --title/--body
-  jj-agentic-aspect plan spec set <id> --status done    # 收尾, 需所有 task 已 done
-
-输出: stdout 单行 JSON. 查询/删除/错误码/链语义见 jj-agentic-aspect plan --help.
+```sh
+jj-agentic-aspect plan spec new <project> <title>
+jj-agentic-aspect plan task new <spec_id> <title>
+jj-agentic-aspect plan task set <id> --status <s>
+jj-agentic-aspect plan spec set <id> --status done
 ```
 
-- `jj-agentic-aspect ask`: 落盘 Q&A. **每条用户消息 MUST 先调 `jj-agentic-aspect ask new` 再做其它**; 仅纯 slash 命令豁免; NEVER 跳过/合并/补记/用 Todo 替代.
+- `jj-agentic-aspect ask`: 每条用户消息 MUST 先调用再做其他操作；仅纯 slash 命令豁免。NEVER 跳过/合并/补记/用 Todo 替代。
+  - `jj-agentic-aspect ask new <project> <body>`: `<project>` = cwd basename；`<body>` = 用户原话，以位置参数传入，不读 stdin。
+  - 其他操作：`jj-agentic-aspect ask --help`。
+- `gh`: 两个账号已登录，可直接使用/切换。
+- `npx wrangler`: 已登录（付费账号）。
+- `notify`: 阻塞/审批/关键信息需要人类介入时调用：
 
-```
-jj-agentic-aspect ask: 落盘人类抛给 AI 的请求 (Q&A 记录). 两层模型 project -> ask, id=ULID. <project>=cwd basename.
-每条 ask 都是独立记录, 不串链.
-
-  jj-agentic-aspect ask new <project> <body>
-    # body=用户原话原文照搬.
-
-输出: stdout 单行 JSON. body 不读 stdin (位置参数). 查询/修改/删除见 jj-agentic-aspect ask --help.
+```sh
+curl -s -G 'https://jj-cloudflare.yigegongjiang.com/notify' --data-urlencode 'text=<原始内容>'
 ```

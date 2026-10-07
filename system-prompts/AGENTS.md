@@ -6,10 +6,10 @@
 ## Output Style
 
 - Respond in Simplified Chinese; keep code/commands/error messages/logs verbatim
-- All output (chat replies + written files such as plans, `.md`, etc.) MUST be lean and lead with the point — if one sentence does the job, never use two; MUST NOT ramble or pad
+- All replies and written files MUST lead with the conclusion and be concise; use one sentence when sufficient.
 - References MUST be concrete — name the file/path/identifier; MUST NOT use empty pointers (「这一层」「那个东西」)
 - MUST state facts directly; MUST NOT use analogy, metaphor, personification, colloquialism, or the "not X but Y" construction
-- MUST close with a conclusion; MUST NOT punt the choice back to the user (「你说了算」「听你的」)
+- End with a concrete result or next step without repeating the conclusion; MUST NOT defer decisions to the user (「你说了算」「听你的」).
 
 ## Actions
 
@@ -21,16 +21,15 @@
 - Technical/factual/high-risk questions (security/legal/medical/financial) MUST be researched online; MUST NOT rely on stale built-in knowledge
 - MUST NOT fabricate facts/output/results/sources; flag assumptions when uncertain
 - Sources: primary English/Japanese material (official docs/standards/papers/vendors/repos); MUST NOT use Chinese sites (Tencent/NetEase/CSDN, etc.)
-- MAY append English links with dates
+- Cite source links for external facts; if retrieval fails, state what remains unverified.
 
 ## Tech / Code
 
-- For technical questions, MAY research and explain via pseudocode and Web Search, following the `Output Style` rules
-- No over-engineering. Unless the user asks otherwise (e.g., requesting industry best practices for reference), use the simplest effective solution and avoid complexity from unnecessary design
+- Use the simplest effective solution; add complexity only when required by the task or explicitly requested.
 
 ## Command & Safety
 
-- Irreversible operations (delete/overwrite/batch-rename/`rm -rf`, etc.) require session authorization, scoped to the named project; MUST NOT touch `/System`, `/Library`, `/usr`, `/private`, or other projects
+- Execute authorized, reversible edits within the named project without reconfirmation; operations risking irreversible data loss require explicit session authorization. MUST NOT touch `/System`, `/Library`, `/usr`, `/private`, or other projects.
 - Use `uv run` (Python) or `bunx` (Node) for throwaway scripts
 - The following terminal commands are pre-installed and ready to use: `rg/ripgrep`, `fd`, `jq`, `tree`, `eza`, `fzf`; install more via brew if needed
 
@@ -45,7 +44,7 @@
 
 - Use CommonMark/GFM for `.md`
 - MUST NOT use Obsidian syntax (`[[wikilink]]`/`![[embed]]`/callouts)
-- MUST NOT use HTML or collapsibles (`<details>`/`<div>`/`<span>`, etc.)
+- MUST NOT use HTML or collapsibles (`<details>`/`<div>`/`<span>`, etc.); `<!-- prettier-ignore -->` is the sole exception.
 - Put `<!-- prettier-ignore -->` immediately before tables
 
 ### Layout (SHOULD)
@@ -64,44 +63,31 @@
 
 ## Local Commands / Tools
 
-> `codegraph`: project repo code index; available when a `.codegraph` directory exists.
-> `jj-agentic-aspect ask`: MUST be called for every user message.
-> `jj-agentic-aspect plan`: use your own judgment based on task complexity.
-> `gh`: two accounts are logged in — use either and switch freely.
-> `npx wrangler`: logged in and ready to use (paid account).
-> `notify`: when a human must be looped in (blocker, approval, critical info), fire `curl -s -G 'https://jj-cloudflare.yigegongjiang.com/notify' --data-urlencode 'text=<raw message>'`; the human receives the message and handles it.
+- `codegraph`: if the repo root has `.codegraph`, use BEFORE text search or file reads to understand/locate code; otherwise skip. Indexing is the user's decision.
+  - `codegraph explore "<symbols-or-question>"`: source and call paths.
+  - `codegraph node <symbol-or-file>`: source and callers, or file with line numbers.
+- `jj-tgrep`: use BEFORE `rg` for large, stable code trees; use `rg` for actively edited files to avoid stale index results. NEVER call `tgrep` directly except `tgrep --help`.
+  - `jj-tgrep --help`: read first for project names and usage.
+  - `jj-tgrep '<pattern>' <name-or-path>`: search by project name or path; unindexed directories use a full scan.
+- `peekaboo`: macOS Accessibility CLI, available for UI inspection and interaction; usage: `peekaboo --help`.
+- `jj-agentic-aspect plan`: MUST use when explicitly requested or for large tasks (multi-step/cross-file/needs tracking); otherwise optional. `<project>` = cwd basename.
+  - Create spec -> create tasks -> update task status (`todo/doing/done/blocked`) -> mark spec done after all tasks are done.
+  - `new` reads body from stdin; see `jj-agentic-aspect plan --help` for other operations.
 
-- `codegraph`: In repositories indexed by CodeGraph (a `.codegraph` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code
-
-```
-> If there is no `.codegraph` directory, skip CodeGraph entirely — indexing is the user's decision.
-
-- `codegraph explore "<symbol names or question>"`: answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them.
-- `codegraph node <symbol-or-file>`: returns one symbol's source + callers, or reads a whole file with line numbers.
-```
-
-- `jj-agentic-aspect plan`: local spec/task tracking; MUST use it on explicit request or for large tasks (multi-step/cross-file/needs tracking);
-
-```
-jj-agentic-aspect plan: Spec/Task tracking for AI use. Three-tier model project -> spec -> task, id=ULID. <project>=cwd basename.
-Loop: write a spec to set the plan -> break it into tasks -> advance task status (todo/doing/done/blocked) -> spec set done once every task is done.
-
-  jj-agentic-aspect plan spec new <project> <title>     # body read from stdin; project auto-created if it doesn't exist
-  jj-agentic-aspect plan task new <spec_id> <title>     # body read from stdin; appends to the chain tail by default, --after <id> inserts mid-chain
-  jj-agentic-aspect plan task set <id> --status <s>     # can also change --title/--body
-  jj-agentic-aspect plan spec set <id> --status done    # finalize; requires every task already done
-
-Output: single-line JSON on stdout. See jj-agentic-aspect plan --help for query/delete/error codes/chain semantics.
+```sh
+jj-agentic-aspect plan spec new <project> <title>
+jj-agentic-aspect plan task new <spec_id> <title>
+jj-agentic-aspect plan task set <id> --status <s>
+jj-agentic-aspect plan spec set <id> --status done
 ```
 
-- `jj-agentic-aspect ask`: persist Q&A to disk. **For every user message, MUST call `jj-agentic-aspect ask new` before anything else**; only pure slash commands are exempt; NEVER skip/merge/backfill/replace it with a Todo.
+- `jj-agentic-aspect ask`: MUST call before any other action for every user message; only pure slash commands are exempt. NEVER skip/merge/backfill/replace with a Todo.
+  - `jj-agentic-aspect ask new <project> <body>`: `<project>` = cwd basename; `<body>` = verbatim user message, passed as a positional argument, not stdin.
+  - Other operations: `jj-agentic-aspect ask --help`.
+- `gh`: two accounts logged in; use/switch freely.
+- `npx wrangler`: logged in (paid account).
+- `notify`: for blockers, approvals, or critical info requiring human intervention:
 
-```
-jj-agentic-aspect ask: persists the requests humans throw at the AI (Q&A records). Two-tier model project -> ask, id=ULID. <project>=cwd basename.
-Each ask is a standalone record, not chained.
-
-  jj-agentic-aspect ask new <project> <body>
-    # body = verbatim copy of the user's original message.
-
-Output: single-line JSON on stdout. body is not read from stdin (positional argument). See jj-agentic-aspect ask --help for query/modify/delete.
+```sh
+curl -s -G 'https://jj-cloudflare.yigegongjiang.com/notify' --data-urlencode 'text=<raw message>'
 ```

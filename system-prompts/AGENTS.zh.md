@@ -86,7 +86,6 @@ jj-agentic-aspect plan spec set <id> --status done
   - `jj-agentic-aspect ask new <project> <body>`: `<project>` = cwd basename；`<body>` = 用户原话，以位置参数传入，不读 stdin。
   - 其他操作：`jj-agentic-aspect ask --help`。
 - `gh`: 两个账号已登录，可直接使用/切换。
-- `npx wrangler`: 已登录（付费账号）。
 - `notify`: 阻塞/审批/关键信息需要人类介入时调用：
 
 ```sh

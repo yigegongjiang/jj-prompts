@@ -86,7 +86,6 @@ jj-agentic-aspect plan spec set <id> --status done
   - `jj-agentic-aspect ask new <project> <body>`: `<project>` = cwd basename; `<body>` = verbatim user message, passed as a positional argument, not stdin.
   - Other operations: `jj-agentic-aspect ask --help`.
 - `gh`: two accounts logged in; use/switch freely.
-- `npx wrangler`: logged in (paid account).
 - `notify`: for blockers, approvals, or critical info requiring human intervention:
 
 ```sh

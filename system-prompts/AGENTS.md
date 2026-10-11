@@ -70,8 +70,9 @@
   - `jj-tgrep --help`: read first for project names and usage.
   - `jj-tgrep '<pattern>' <name-or-path>`: search by project name or path; unindexed directories use a full scan.
 - `peekaboo`: macOS Accessibility CLI, available for UI inspection and interaction; usage: `peekaboo --help`.
-- `agent-device`: iPhone (iOS) automation CLI, available for UI inspection and interaction; usage: `agent-device --help`.
+- `agent-device`: iPhone (iOS) automation CLI, available for UI inspection and interaction; usage: `agent-device --help`; always set env `AGENT_DEVICE_IOS_BUNDLE_ID=com.yigegongjiang.agentdevice.orgdemo`.
 - `ego-browser`: browser CLI for visiting and interacting with any web page; read `~/.agents/skills/ego-browser/SKILL.md` before use. When done, close the TaskSpace you opened (`await task.finish({ keep: [] })`).
+- `twscrape`: X/Twitter search CLI; every invocation MUST include `--db ~/.config/twscrape/accounts.db` before the subcommand, e.g. `twscrape --db ~/.config/twscrape/accounts.db search|tweet_details|tweet_replies <arg> --limit 20|50|100|200`.
 - `jj-agentic-aspect plan`: MUST use when explicitly requested or for large tasks (multi-step/cross-file/needs tracking); otherwise optional. `<project>` = cwd basename.
   - Create spec -> create tasks -> update task status (`todo/doing/done/blocked`) -> mark spec done after all tasks are done.
   - `new` reads body from stdin; see `jj-agentic-aspect plan --help` for other operations.
